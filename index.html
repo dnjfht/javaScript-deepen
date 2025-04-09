@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DOM</title>
+  </head>
+
+  <body>
+    <ul id="fruits" style="background-color: black; color: white">
+      <li>Apple</li>
+    </ul>
+
+    <input id="user" type="text" value="ungmo2" />
+  </body>
+
+  <script>
+    const $fruits = document.getElementById("fruits");
+    const $apple = $fruits.firstElementChild;
+
+    const $shallowClone = $apple.cloneNode();
+    $shallowClone.textContent = "Banana";
+    $fruits.appendChild($shallowClone);
+
+    const $deepClone = $fruits.cloneNode(true);
+    $fruits.appendChild($deepClone);
+
+    const { attributes } = $fruits;
+    console.log(attributes);
+
+    const $input = document.getElementById("user");
+    $input.value = "hahaha";
+
+    const { attributes: attributes2, value } = $input;
+    console.log(attributes2);
+    console.log(value);
+  </script>
+</html>

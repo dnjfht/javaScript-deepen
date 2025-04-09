@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+
+  <body>
+    <ul class="users">
+      <li id="1" data-user-id="7621" style="color: red">Lee</li>
+      <li id="2" data-user-id="9524">Kim</li>
+    </ul>
+
+    <!-- 이벤트 핸들러 어트리뷰트. 함수 호출문을 할당한다. => 이벤트 핸들러에 함수를 전달하기 위하여 -->
+    <!-- button onclick="console.log('hi');"> -->
+    <div onclick="console.log('happy!XD')">
+      <button>Click!</button>
+    </div>
+
+    <div>
+      <p>클릭하세요. 클릭한 곳의 좌표가 표시됩니다.</p>
+      <em class="message"></em>
+    </div>
+
+    <script>
+      const users = [...document.querySelector(".users").children];
+      console.log(users);
+      const user = users.find((user) => user.dataset.userId === "7621");
+      console.log(user);
+
+      // 이벤트 핸들러 프로퍼티가 이벤트 핸들러 어트리뷰트보다 우선시 된다.
+      // 하나 이상의 이벤트 핸들러를 등록할 수 없다.
+      const btn = document.querySelector("button");
+      btn.onclick = function () {
+        console.log("나 제대로 클릭했어!");
+      };
+
+      // 이벤트 핸들러 프로퍼티로 등록한 이벤트 핸들러는 제거할 때 이벤트 핸들러 프로퍼티에 null을 할당하면 된다.
+      btn.onclick = null;
+
+      const handleClick = () => {
+        console.log("addEventListener!");
+      };
+
+      // addEventListener 메서드가 가장 우선시 된다.
+      // 하나 이상의 이벤트 핸들러를 등록할 수 있다.
+      btn.addEventListener("click", handleClick, true);
+
+      // addEventListener 메서드와 동일한 방식으로 이벤트 핸들러를 제거한다.
+      // addEventListener 메서드에 전달한 인수와 removeEventListener 메서드에 전달한 인수가 일치하지 않으면
+      // 이벤트 핸들러가 제거되지 않는다.
+      btn.removeEventListener("click", handleClick, true);
+
+      btn.addEventListener("click", function foo() {
+        console.log("hello~");
+        btn.removeEventListener("click", foo);
+      });
+
+      // 기명 함수를 이벤트로 등록할 수 없다면, 함수 자신을 가리키는 arguments.callee를 사용할 수 있다.
+      // but, arguments.callee는 코드 최적화를 방해하므로 strict mode에서는 사용이 금지되고
+      // 가급적 이벤트 핸들러의 참조를 변수나 자료구조에 저장하여 제거하는 것이 좋다.
+      btn.addEventListener("click", function () {
+        console.log("My name is Seungmin...");
+        btn.removeEventListener("click", arguments.callee);
+      });
+
+      const msg = document.querySelector(".message");
+
+      function showCoords(e) {
+        msg.textContent = `clientX: ${e.clientX}, clientY: ${e.clientY}`;
+      }
+      document.onclick = showCoords;
+    </script>
+  </body>
+</html>
