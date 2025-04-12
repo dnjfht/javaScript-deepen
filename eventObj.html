@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Event Obj</title>
+  </head>
+  <body>
+    <input type="text" />
+    <input type="checkbox" />
+    <button>Click me!</button>
+
+    <div>
+      <input class="checkbox2" type="checkbox" />
+      <em class="message">off</em>
+    </div>
+
+    <script>
+      let e = new Event("foo");
+      console.log(e);
+      console.log(e instanceof Event);
+      console.log(e instanceof Object);
+
+      e = new FocusEvent("focus");
+      console.log(e);
+
+      e = new MouseEvent("click");
+      console.log(e);
+
+      e = new KeyboardEvent("keyup");
+      console.log(e);
+
+      e = new InputEvent("change");
+      console.log(e);
+
+      const $input = document.querySelector("input[type=text]");
+      const $checkbox = document.querySelector("input[type=checkbox]");
+      const $button = document.querySelector("button");
+
+      window.onload = console.log;
+      $checkbox.onchange = console.log;
+      $input.onfocus = console.log;
+      $input.oninput = console.log;
+      $input.onkeyup = console.log;
+      $button.onclick = console.log;
+
+      const $checkbox2 = document.querySelector(".checkbox2");
+      const $msg = document.querySelector(".message");
+
+      $checkbox2.onchange = (e) => {
+        console.log(e.target === e.currentTarget);
+        console.log(Object.getPrototypeOf(e) === Event.prototype);
+
+        $msg.textContent = e.target.checked ? "on" : "off";
+      };
+    </script>
+  </body>
+</html>
