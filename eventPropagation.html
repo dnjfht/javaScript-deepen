@@ -4,6 +4,106 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Event Propagation</title>
+
+    <style>
+      html,
+      body {
+        height: 100%;
+      }
+    </style>
   </head>
-  <body></body>
+  <body>
+    <ul id="fruits">
+      <li id="apple">Apple</li>
+      <li id="banana">Banana</li>
+      <li id="orange">Orange</li>
+    </ul>
+
+    <div id="wrap">
+      <div>
+        <p>HAHAHAHAHAHA</p>
+      </div>
+
+      <div id="container">
+        <button id="button1">Button 1</button>
+        <button id="button2">Button 2</button>
+      </div>
+    </div>
+
+    <p id="comment">
+      버블링과 캡처링 이벤트 <button id="button3">버튼</button>
+    </p>
+
+    <script>
+      const $fruits = document.getElementById("fruits");
+      const $banana = document.getElementById("banana");
+
+      // $fruits.addEventListener("click", (e) => {
+      //   console.log(`이벤트 단계: ${e.eventPhase}`);
+      //   console.log(`이벤트 타깃: ${e.target}`);
+      //   console.log(`커런트 타킷: ${e.currentTarget}`);
+      // });
+
+      // 캡처링 단계에서 이벤트 처리
+      // $fruits.addEventListener(
+      //   "click",
+      //   (e) => {
+      //     console.log("Parent (캡처링): Click prevented!");
+      //     e.stopPropagation(); // 하위 요소로 이벤트 전달 중단
+      //   },
+      //   true
+      // );
+
+      // 버블링 단계에서 이벤트 처리 (실행되지 않음)
+      // $banana.addEventListener(
+      //   "click",
+      //   (e) => {
+      //     console.log("Child: This will not be executed.");
+      //   },
+      //   false
+      // );
+
+      const wrap = document.getElementById("wrap");
+      const container = document.getElementById("container");
+
+      // 캡처링 단계에서 이벤트 처리
+      // wrap.addEventListener(
+      //   "click",
+      //   function (e) {
+      //     if (!container.contains(e.target)) {
+      //       console.log("Clicked outside the container!");
+      //       e.stopPropagation(); // 컨테이너 내부 요소로 이벤트 전달 중단
+      //     }
+      //   },
+      //   true
+      // );
+
+      // container.addEventListener(
+      //   "click",
+      //   function (e) {
+      //     console.log("Clicked inside the container.");
+      //   },
+      //   false
+      // );
+
+      const comment = document.getElementById("comment");
+      const button3 = document.getElementById("button3");
+
+      document.body.addEventListener("click", () => {
+        console.log("Handle for body.");
+      });
+
+      comment.addEventListener(
+        "click",
+        () => {
+          console.log("Handler for paragraph.");
+        },
+        true
+      );
+
+      button3.addEventListener("click", () => {
+        console.log("Handler for button.");
+      });
+    </script>
+  </body>
 </html>
