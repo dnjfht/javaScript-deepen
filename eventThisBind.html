@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Event This Bind</title>
+  </head>
+
+  <body>
+    <button class="btn1">0</button>
+    <button class="btn2">0</button>
+    <button class="btn3">0</button>
+
+    <script>
+      const $button1 = document.querySelector(".btn1");
+      const $button2 = document.querySelector(".btn2");
+
+      // $button1.onclick = function (e) {
+      //   console.log(this); // $button1
+      //   console.log(e.currentTarget);
+      //   console.log(this === e.currentTarget);
+
+      //   ++this.textContent;
+      // };
+
+      // $button2.addEventListener("click", function (e) {
+      //   console.log(this); // $button1
+      //   console.log(e.currentTarget);
+      //   console.log(this === e.currentTarget);
+
+      //   ++this.textContent;
+      // });
+
+      $button1.onclick = (e) => {
+        console.log(this); // window
+        console.log(e.currentTarget);
+        console.log(this === e.currentTarget);
+
+        ++this.textContent;
+      };
+
+      $button2.addEventListener("click", (e) => {
+        console.log(this); // window
+        console.log(e.currentTarget);
+        console.log(this === e.currentTarget);
+
+        ++this.textContent;
+      });
+
+      class App {
+        constructor() {
+          // this => class로 생성한 인스턴스를 가리킴
+          this.$button3 = document.querySelector(".btn3");
+          this.count = 0;
+
+          // this.$button3.onclick = this.increase;
+          this.$button3.onclick = this.increase.bind(this);
+        }
+
+        increase() {
+          // 이벤트 핸들러 프로퍼티(addEventListener) 방식을 사용했을
+          // 이벤트 핸들러 내부의 this는 이벤트를 바인딩한 DOM 요소를 가리킨다.
+          // 이럴 때는 이벤트 핸들러로 바인딩할 때 bind 메서드를 사용하여 this를 전달한다.
+          console.log(this); // this => this.$button3
+          this.$button3.textContent = ++this.count;
+        }
+
+        // 다른 방법으로는 bind 메서드 대신 클래스 필드에 할당한 화살표 함수를 이벤트 핸들러로 등록하는 것이다.
+        // but, 이 경우 increase는 인스턴스 메서드이며 내부의 this는 인스턴스를 가리킨다.
+        // increase = () => this.$button3.textContent = ++this.count;
+      }
+      new App();
+    </script>
+  </body>
+</html>
