@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Event Propagation</title>
+
+    <style>
+      #fruits {
+        display: flex;
+        list-style: none;
+        padding: 0;
+      }
+
+      #fruits li {
+        width: 100px;
+        cursor: pointer;
+      }
+
+      #fruits .active {
+        color: red;
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+
+  <body>
+    <nav>
+      <ul id="fruits">
+        <li id="apple" class="active">Apple</li>
+        <li id="banana">Banana</li>
+        <li id="orange">Orange</li>
+      </ul>
+    </nav>
+
+    <div>선택된 네비게이션 아이템: <em class="msg">apple</em></div>
+
+    <script>
+      const $fruits = document.getElementById("fruits");
+      const $msg = document.querySelector(".msg");
+
+      const active = ({ target }) => {
+        //
+        if (!target.matches("#fruits > li")) return;
+
+        [...$fruits.children].forEach(($fruit) => {
+          $fruit.classList.toggle("active", $fruit === target);
+          $msg.textContent = target.id;
+        });
+      };
+
+      // click 이벤트가 반응하도록 모든 요소에 click 이벤트 핸들러를 등록.
+      // 내비게이션 아이템이 100개면 100개의 요소에 이벤트 핸들러를 등록해야 한다.
+      // 성능 저하의 원인이 되며, 유지보수에도 부적합한 코드를 생성하게 된다.
+      // document.getElementById("apple").onclick = active;
+      // document.getElementById("banana").onclick = active;
+      // document.getElementById("orange").onclick = active;
+
+      // 위의 코드 대신 이벤트 위임을 사용한다.
+      $fruits.onclick = active;
+    </script>
+  </body>
+</html>

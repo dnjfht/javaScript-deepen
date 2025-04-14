@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stop Propagation</title>
+  </head>
+
+  <body>
+    <div class="container">
+      <button class="btn1">Button 1</button>
+      <button class="btn2">Button 2</button>
+      <button class="btn3">Button 3</button>
+    </div>
+
+    <script>
+      document.querySelector(".container").onclick = ({ target }) => {
+        if (!target.matches(".container > button")) return;
+
+        target.style.color = "red";
+      };
+
+      // 이벤트 전파 방지(stopPropagation): 하위 DOM 요소의 이벤트를 개별적읋 처리하기 위해 이벤트 전파를 중단시킨다.
+      // 하위 요소 class btn2은 이벤트가 전파되는 것을 중단하고 자체적으로 이벤트를 처리한다.
+      document.querySelector(".btn2").onclick = (e) => {
+        e.stopPropagation();
+
+        e.target.style.color = "blue";
+      };
+    </script>
+  </body>
+</html>
