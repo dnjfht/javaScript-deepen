@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Timer</title>
+  </head>
+
+  <body>
+    <script>
+      setTimeout(() => console.log("Hi!"), 1000);
+      setTimeout((name) => console.log(`Hi!, ${name}`), 2000, "Lee");
+      setTimeout(() => console.log("Hi!, Jackson")); // 기본값 0
+
+      const timerId = setTimeout(() => console.log("Hi~!"), 1000);
+      console.log(timerId);
+      // setTimeout 함수는 생성된 타이머를 식별할 수 있는 고유한 타이머 id 5를 반환한다.
+      clearTimeout(timerId);
+      // setTimeout 함수가 반환한 id를 clearTimeout 함수의 인수로 전달하여 타이머를 취소할 수 있다.
+      // setTimeout 함수의 콜백 함수가 실행되지 않는다.
+
+      let count = 1;
+      const timeoutId = setInterval(() => {
+        console.log(count);
+
+        if (count++ === 5) clearInterval(timeoutId);
+      }, 1000);
+    </script>
+  </body>
+</html>
