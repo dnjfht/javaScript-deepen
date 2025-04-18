@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>비동기 프로그래밍</title>
+  </head>
+
+  <body>
+    <script>
+      function sleep(func, delay) {
+        const delayUtil = Date.now() + delay;
+
+        while (Date.now() < delayUtil);
+        func();
+      }
+
+      function foo() {
+        console.log("foo");
+      }
+
+      function bar() {
+        console.log("bar");
+      }
+
+      // sleep(foo, 3 * 1000); // 동기: foo 함수가 호출된 다음에 bar 함수가 호출된다.(3초 블로킹)
+      setTimeout(foo, 3 * 1000); // 비동기: bar 함수가 호출된 다음에 foo 함수가 호출된다.(블로킹 X)
+      bar();
+    </script>
+  </body>
+</html>
