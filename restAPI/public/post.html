@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>json-server : post</title>
+  </head>
+
+  <body>
+    <pre></pre>
+
+    <script>
+      const xhr = new XMLHttpRequest();
+
+      xhr.open("POST", "/todos");
+      xhr.setRequestHeader("content-type", "application/json");
+      xhr.send(JSON.stringify({ id: 4, content: "ANGULAR", completed: false }));
+
+      xhr.onload = () => {
+        if (xhr.status === 200 || xhr.status === 201) {
+          document.querySelector("pre").textContent = xhr.response;
+        } else {
+          console.error("ERROR", xhr.status, xhr.statusText);
+        }
+      };
+    </script>
+  </body>
+</html>
