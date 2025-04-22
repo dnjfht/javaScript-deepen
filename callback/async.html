@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>async</title>
+  </head>
+
+  <body>
+    <input type="text" />
+
+    <script>
+      // 비동기 함수는 함수 내부에 비동기로 동작하는 코드를 포함한 함수를 말한다.
+      // 함수 내부의 비동기로 동작하는 코드가 완료되지 않았다 해도 기다리지 않고 종료된다.
+      // 비동기로 동작하는 코드에서 처리 결과를 외부로 반환하거나 상위 스코프의 변수에 할당하면 기대한 대로 동작하지 않는다.(undefined 반환)
+
+      let todos;
+
+      const get = (url) => {
+        const xhr = new XMLHttpRequest();
+
+        xhr.open("GET", url);
+        xhr.send();
+
+        xhr.onload = () => {
+          if (xhr.status === 200) {
+            console.log(JSON.parse(xhr.response));
+            // {body : "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto", id: 1, title : "sunt aut facere repellat provident occaecati excepturi optio reprehenderit", userId : 1}
+            return JSON.parse(xhr.response);
+            todos = JSON.parse(xhr.response);
+          } else {
+            console.error(`ERROR: ${xhr.status} ${xhr.statusText}`);
+          }
+        };
+      };
+
+      const response = get("https://jsonplaceholder.typicode.com/posts/1");
+      console.log(response); // undefined
+      console.log(todos); // undefined
+
+      // setTimeout 비동기 함수
+      // setTimeout 함수의 경우 고유한 타이머 id를 반환하므로 콜백함수에서 값을 반환하는 것은 무의미하다.
+      let g = 0;
+
+      let word;
+      setTimeout(() => (g = 100), 0);
+      console.log(g); // 0
+
+      // 이벤트 핸들러는 특정 이벤트가 발생했을 때 이벤트 루프에 의해 호출되는 함수이다.
+      // 이벤트 핸들러의 주요 역할은 특정 이벤트에 반응하여 팔요한 작업을 수행하는 것이다. 주로 이벤트 핸들러 내부에서 완료되며, 반환값을 필요하지 않다.
+      // 이벤트 핸들러에서의 반환은 의미가 없다.(값을 직접적으로 사용하거나 처리하지 않는다.)
+      document.querySelector("input").oninput = function () {
+        console.log(this.value);
+
+        return this.value;
+        word = this.value;
+      };
+      console.log(word); // undefined
+    </script>
+  </body>
+</html>
