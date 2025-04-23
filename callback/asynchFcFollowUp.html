@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>비동기 함수 후속 처리</title>
+  </head>
+
+  <body>
+    <script>
+      // 비동기 함수는 비동기 처리 결과를 외부에 반환할 수 없고 상위 스코프의 변수에 할당할 수도 없다.
+      // 따라서 비동기 함수의 처리 결과의 후속 처리는 비동기 함수 내부에서 수행해야 한다.
+      // 이런 비동기 함수를 범용적으로 사용하기 위하여 비동기 함수에 비동기 처리 결과에 대한 후속 처리를 수행하는 콜백함수를 전달하는 것이 일반적이다.
+
+      const get = (url, successCallback, failureCallback) => {
+        const xhr = new XMLHttpRequest();
+
+        xhr.open("GET", url);
+        xhr.send();
+
+        xhr.onload = () => {
+          if (xhr.status === 200) {
+            successCallback(JSON.parse(xhr.response));
+            // {userId: 1, id: 1, title: 'sunt aut facere repellat provident occaecati excepturi optio reprehenderit', body: 'quia et suscipit\nsuscipit recusandae consequuntur …strum rerum est autem sunt rem eveniet architecto'}
+          } else {
+            failureCallback(`ERROR: ${xhr.status} ${xhr.statusText}`);
+          }
+        };
+      };
+
+      get(
+        "https://jsonplaceholder.typicode.com/posts/1",
+        console.log,
+        console.error
+      );
+
+      // 하지만 이러한 콜백함수가 비동기 처리 결과를 가지고 또다시 비동기 함수를 호출해야 한다면
+      // 콜백함수가 중첩되어 복잡도가 높아지는 현상이 발생하게 된다.(콜백 헬)
+
+      const url = "https://jsonplaceholder.typicode.com";
+
+      get(`${url}/posts/1`, ({ userId }) => {
+        console.log(userId);
+        // 1
+
+        get(`${url}/users/${userId}`, (userInfo) => {
+          console.log(userInfo);
+          // {id: 1, name: 'Leanne Graham', username: 'Bret', email: 'Sincere@april.biz', address: {…}, …}
+        });
+      });
+    </script>
+  </body>
+</html>

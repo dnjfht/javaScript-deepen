@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>비동기 함수 에러 처리</title>
+  </head>
+
+  <body>
+    <script>
+      // 비동기 처리를 위한 콜백 패턴의 문제점 중 가장 심각한 것은 에러 처리가 곤란하다는 것이다.
+      // try 코드 블록 내에서 호출한 비동기 함수의 콜백함수가 발생시킨 에러는 catch 코드 블록에서 캐치되지 않는다.
+
+      // 에러는 호출자 방향으로 전파된다.
+      // 하지만 setTimeout 함수의 콜백함수를 호출한 것은 setTimeout 함수가 아니다.(호출자가 아니라는 얘기다)
+      // 그렇기 때문에 setTimeout 함수의 콜백함수에서 발생시킨 에러는 catch 블록에서 캐치되지 않는다.
+      try {
+        setTimeout(() => {
+          throw new Error("Error!");
+        }, 1000);
+      } catch (e) {
+        // 에러를 캐치하지 못했다.
+        console.error("캐치한 에러", e);
+      }
+    </script>
+  </body>
+</html>

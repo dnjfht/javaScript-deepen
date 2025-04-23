@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Promise</title>
+  </head>
+
+  <body>
+    <script>
+      const promiseGet = (url) => {
+        return new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+
+          xhr.open("GET", url);
+          xhr.send();
+
+          xhr.onload = () => {
+            if (xhr.status === 200) {
+              resolve(JSON.parse(xhr.response));
+            } else {
+              reject(new Error(xhr.status));
+            }
+          };
+        });
+      };
+
+      promiseGet("https://jsonplaceholder.typicode.com/posts/1");
+
+      const fulfilled = new Promise((resolve) => resolve(1));
+      console.log(fulfilled);
+      // Promise {<fulfilled>: 1}
+      // [[Prototype]] : Promise
+      // [[PromiseState]] : "fulfilled"
+      // [[PromiseResult]] : 1
+
+      const rejected = new Promise((_, reject) =>
+        reject(new Error("error occurred..."))
+      );
+      console.log(rejected);
+      // Uncaught (in promise) Error: error occurred...
+
+      // Promise {<rejected>: Error: error occurred... at http://192.168.0.4:5500/promise/promise.html:38:16 at new Promi…}
+      // [[Prototype]] : Promise
+      // [[PromiseState]] : "rejected"
+      // [[PromiseResult]] : Error: error occurred... at http://192.168.0.4:5500/promise/promise.html:38:16 at new Promise (<anonymous>) at http://192.168.0.4:5500/promise/promise.html:37:24
+    </script>
+  </body>
+</html>
