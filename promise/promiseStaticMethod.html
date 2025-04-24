@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Promise Static Method</title>
+  </head>
+
+  <body>
+    <script>
+      // Promise는 주로 생성자 함수로 사용되지만, 함수도 객체이므로 메서드를 가질 수 있다.
+      // Promise는 5개의 정적 메서드를 가진다.
+
+      // Promise.resolve/Promise.reject: 이미 존재하는 값을 래핑하여 Promise를 생성하기 위해 사용한다.
+      let resolvePromise = Promise.resolve([1, 2, 3]);
+      resolvePromise.then(console.log); // [1, 2, 3]
+
+      // 위의 코드는 아래의 코드와 동일하게 동작한다.
+      resolvePromise = new Promise((resolve) => resolve([1, 2, 3]));
+      resolvePromise.then(console.log); // [1, 2, 3]
+
+      let rejectPromise = Promise.reject(new Error("Error...!"));
+      rejectPromise.catch((e) => console.error(e)); // Error: Error...!
+
+      // 위의 코드는 아래의 코드와 동일하게 동작한다.
+      rejectPromise = new Promise((_, reject) =>
+        reject(new Error("Error...!"))
+      );
+      rejectPromise.catch((e) => console.error(e)); // Error: Error...!
+
+      const res = [];
+
+      const requestData1 = () =>
+        new Promise((resolve) => setTimeout(() => resolve(5), 3000));
+      const requestData2 = () =>
+        new Promise((resolve) => setTimeout(() => resolve(10), 2000));
+      const requestData3 = () =>
+        new Promise((resolve) => setTimeout(() => resolve(2), 1000));
+
+      requestData1()
+        .then((data) => {
+          res.push(data);
+          return requestData2();
+        })
+        .then((data) => {
+          res.push(data);
+          return requestData3();
+        })
+        .then((data) => {
+          res.push(data);
+          console.log(res);
+          // [5, 10, 2]
+        })
+        .catch(console.error);
+
+      // Promise.all: 여러 개의 비동기 처리를 모두 병렬 처리할 때 사용한다. promise를 요소로 갖는 배열 등의 이터러블을 인수로 전달받는다.
+      // 첫 번째 promise가 resolve한 처리 결과부터 차례대로 배열에 저장해 그 배열을 resolve하는 새로운 promise를 반환한다.(처리 순서가 보장된다.)
+      // 또한, 인수로 전달받은 배열의 promise가 하나라도 rejected 상태가 되면 나머지 promise가 fulfilled 상태가 되는 것을 기다리지 않고 즉시 종료된다.
+
+      // 위의 코드는 세 개의 비동기 처리를 순차적으로 처리하고 있지만(약 6초 소요), 서로 의존하지 않고 개별적으로 수행된다.
+      // 이런 경우에는 비동기 처리를 순차적으로 처리할 필요가 없다.(Promise.all 메서드 사용) => 약 3초 소요
+      Promise.all([requestData1(), requestData2(), requestData3()])
+        .then(console.log) // [5, 10, 2]
+        .then(console.error);
+
+      Promise.all([
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Error 5")), 3000)
+        ),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Error 10")), 2000)
+        ),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Error 2")), 1000)
+        ),
+      ])
+        .then(console.log)
+        .catch(console.error);
+      // Error: Error2
+      // 세 번째 promise가 가장 먼저 rejected 상태가 되므로, 세 번째 promise가 reject한 에러가 catch  메서드로 전달된다.
+
+      const promiseGet = (url) => {
+        return new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+
+          xhr.open("GET", url);
+          xhr.send();
+
+          xhr.onload = () => {
+            if (xhr.status === 200) {
+              resolve(JSON.parse(xhr.response));
+            } else {
+              reject(new Error(xhr.status));
+            }
+          };
+        });
+      };
+
+      const githubIds = ["jeresig", "ahejlsberg", "ungmo2", "dnjfht"];
+
+      Promise.all(
+        githubIds.map((id) => promiseGet(`https://api.github.com/users/${id}`))
+      )
+        .then((users) => {
+          console.log(users);
+          // [{login: 'jeresig', id: 1615, node_id: 'MDQ6VXNlcjE2MTU=', avatar_url: 'https://avatars.githubusercontent.com/u/1615?v=4', gravatar_id: '', …}, ...]
+          return users.map((user) => user.name);
+        })
+        .then(console.log) // ['John Resig', 'Anders Hejlsberg', 'Ungmo Lee', 'Yoo Seungmin']
+        .catch(console.error);
+
+      // Promise.race: 가장 먼저 fulfilled 상태가 된 promise의 처리 결과를 resolve하는 새로운 promise를 반환한다.
+      // promise를 요소로 갖는 배열 등의 이터러블을 인수로 전달받는다.
+      // 인수로 전달받은 배열의 promise가 하나라도 rejected 상태가 되면 나머지 promise가 fulfilled 상태가 되는 것을 기다리지 않고 즉시 종료된다.
+      Promise.race([
+        new Promise((resolve) => setTimeout(() => resolve(12), 3000)),
+        new Promise((resolve) => setTimeout(() => resolve(200), 2000)),
+        new Promise((resolve) => setTimeout(() => resolve(4), 1000)),
+      ])
+        .then(console.log) // 4
+        .catch(console.error);
+
+      Promise.race([
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Error 12")), 3000)
+        ),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Error 200")), 2000)
+        ),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Error 4")), 1000)
+        ),
+      ])
+        .then(console.log)
+        .catch(console.error);
+      // Error: Error4
+      // 세 번째 promise가 가장 먼저 rejected 상태가 되므로, 세 번째 promise가 reject한 에러가 catch  메서드로 전달된다.
+
+      // Promise.allSettled: 전달받은 rpomise가 모두 settled 상태(fulfilled or rejected)가 되면 처리 결과를 배열로 반환한다.
+      // promise를 요소로 갖는 배열 등의 이터러블을 인수로 전달받는다.
+      // 반환한 배열에는 fulfilled, rejected 상태와는 상관없이 Promise.allSettled 메서드가 인수로 전달받은 모든 promise들의 처리 결과가 모두 담겨있다.
+      // fulfilled 상태: 비동기 처리 상태를 나타내는 status 프로퍼티와 처리 결과를 나타내는 value 프로퍼티를 갖는다.
+      // rejected 상태: 비동기 처리 상태를 나타내는 status 프로퍼티와 에러를 나타내는 reason 프로퍼티를 갖는다.
+
+      Promise.allSettled([
+        new Promise((resolve) => setTimeout(() => resolve(1), 2000)),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Error!")), 1000)
+        ),
+      ]).then(console.log);
+      // [{status: 'fulfilled', value: 1}, {status: 'rejected', reason: Error: Error! at http://192.168.0.4:5500/promise/promiseStaticMethod.html:148:35}]
+    </script>
+  </body>
+</html>
